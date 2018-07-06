@@ -1,7 +1,6 @@
 import React from 'react';
-import {validateAll} from 'indicative';
-import axios from 'axios';
-import config from '../../config'
+
+
 
 export default class SignUp extends React.Component{
   constructor(){
@@ -22,64 +21,19 @@ export default class SignUp extends React.Component{
     })
   };
 
-  handleSubmit = (e)=>{
+  handleSubmit = async (e)=>{
     e.preventDefault();
-    // console.log(this.state);
 
-    //validate user data
-
-    const data = this.state;
-
-
-    const rules = {
-      name: 'required|min:6|max:30',
-      email: 'required|email',
-      password: 'required|min:6|max:30|confirmed',
-    };
-
-    const messages = {
-      required: 'This {{field}} is required',
-      'name.min': 'The minimum symbols is 6',
-      'email.email': 'The email is invalid',
-      'password.confirmed': 'The password confirmation does not match'
-    };
-
-    validateAll(data, rules, messages)
-      .then(()=>{
-
-        axios.post(`${config.apiUrl}/auth/register`, {
-          name: this.state.name,
-          email: this.state.email,
-          password: this.state.password,
-        })
-          .then((response)=>{
-          localStorage.setItem('user', JSON.stringify(response.data.data))
-              this.props.history.push('/')
-            }
-          )
-          .catch((errors)=> {
-              console.log(errors.response);
-
-              const formattedErrrors = {};
-              formattedErrrors['email']=errors.response.data.email[0];
-
-              this.setState({
-                errors: formattedErrrors
-              })
-            }
-          );
-      })
-      .catch(errors=> {
-        console.log(errors);
-        const formattedErrors = {};
-
-        errors.forEach( error => formattedErrors[error.field] = error.message);
-
-        console.log(formattedErrors);
-        this.setState({
-          errors: formattedErrors
-        })
-      })
+    try{
+      let user = await this.props.registerUser(this.state)
+      console.log(user);
+      localStorage.setItem('user', JSON.stringify(user))
+      this.props.setAuthUser(user)
+      this.props.history.push('/');
+    }catch(errors){
+        // console.log(errors);
+        this.setState({errors})
+    }
   };
 
   render(){
