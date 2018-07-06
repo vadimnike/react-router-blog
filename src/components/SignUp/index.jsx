@@ -58,22 +58,23 @@ export default class SignUp extends React.Component{
         this.props.history.push('/')
 
       } catch(errors){
-        console.log(errors.response);
+          // console.log(errors.response);
 
-        const formattedErrrors = {};
-        formattedErrrors['email']=errors.response.data.email[0];
+          const formattedErrrors = {};
+          formattedErrrors['email']=errors.response.data.email[0];
 
-        this.setState({
-          errors: formattedErrrors
-        })
+          this.setState({
+            errors: formattedErrrors
+          })
       }
     }catch(errors){
-      console.log(errors);
+      // console.log(errors);
       const formattedErrors = {};
 
       errors.forEach( error => formattedErrors[error.field] = error.message);
 
-      console.log(formattedErrors);
+      // console.log(formattedErrors);
+
       this.setState({
         errors: formattedErrors
       })
