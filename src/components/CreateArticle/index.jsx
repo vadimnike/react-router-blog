@@ -1,30 +1,56 @@
 import React from 'react';
+import {Banner} from './../Banner';
 
-
-export const Article = ()=>{
+export const CreateArticle = ()=>{
   return(
-    <article className="mt-90">
-      <header className="text-center mb-40">
-        <h3>
-          <a href="blog-single.html">New features will add to dashboard soon</a>
-        </h3>
-        <div className="link-color-default fs-12">
-          <a href="#">News</a>,
-          <time>May 13, 2017</time>
-        </div>
-      </header>
-      <a href="blog-single.html">
-        <img className="rounded" src="assets/img/blog-1.jpg" alt="..." />
-      </a>
-      <div className="card-block">
-        <p className="text-justify">Together. Great. So good was saying, that can't first let called air divide stars male isn't i. Herb third let
-          may fourth divide. Greater gathering land you'll i their beast have. She'd form sea it wherein fowl, spirit
-          creeping living. Likeness creepeth you hath heaven. Likeness, moveth fruitful behold. Open evening a air us
-          behold. Saying above moving second a subdue likeness after also second.</p>
-        <p className="text-center mt-40">
-          <a className="btn btn-primary btn-round" href="blog-single.html">Read more</a>
-        </p>
+      <div>
+        <Banner
+            backgroundImage={`url(${process.env.PUBLIC_URL}/assets/img/bg-laptop.jpg`}
+            title="Write an article"
+        />
+        {/*<header className="header header-inverse bg-fixed" style={{backgroundImage: `url(${process.env.PUBLIC_URL}/assets/img/bg-laptop.jpg`}} data-overlay={8}>*/}
+          {/*<div className="container text-center">*/}
+            {/*<div className="row">*/}
+              {/*<div className="col-12 col-lg-8 offset-lg-2">*/}
+                {/*<h1>Write an article</h1>*/}
+              {/*</div>*/}
+            {/*</div>*/}
+          {/*</div>*/}
+        {/*</header>*/}
+        <main className="main-content">
+          <section className="section">
+            <div className="container">
+              <div className="row">
+                <div className="col-12 col-lg-12">
+                  <form className="p-30 bg-gray rounded" method="POST" data-form="mailer">
+                    <div className="row">
+                      <div className="form-group col-md-12 my-5">
+                        <input type="file" className="form-control" />
+                      </div>
+                      <div className="form-group col-12 col-md-6">
+                        <input className="form-control form-control-lg" type="text" name="name" placeholder="Title" />
+                      </div>
+                      <div className="form-group col-12 col-md-6">
+                        <select name id className="form-control form-control-lg">
+                          <option value>Select category</option>
+                          <option value>Vuejs</option>
+                          <option value>Reactjs</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <textarea className="form-control form-control-lg" rows={4} placeholder="Content" name="message" defaultValue={""} />
+                    </div>
+                    <div className="text-center">
+                      <button className="btn btn-lg btn-primary" type="submit">Create Article</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
       </div>
-    </article>
   )
 };

@@ -1,30 +1,129 @@
 import React from 'react';
+import {validateAll} from 'indicative';
+import axios from 'axios';
+import config from '../../config'
+
+export default class SignUp extends React.Component{
+  constructor(){
+    super();
+
+    this.state={
+      name: '',
+      email: '',
+      password: '',
+      password_confirmation: '',
+      errors: {}
+    }
+  }
+
+  handleInputChange = (e)=>{
+    this.setState({
+      [e.target.name]: e.target.value
+    })
+  };
+
+  handleSubmit = (e)=>{
+    e.preventDefault();
+    // console.log(this.state);
+
+    //validate user data
+
+    const data = this.state;
 
 
-export const Article = ()=>{
-  return(
-    <article className="mt-90">
-      <header className="text-center mb-40">
-        <h3>
-          <a href="blog-single.html">New features will add to dashboard soon</a>
-        </h3>
-        <div className="link-color-default fs-12">
-          <a href="#">News</a>,
-          <time>May 13, 2017</time>
+    const rules = {
+      name: 'required|min:6|max:30',
+      email: 'required|email',
+      password: 'required|min:6|max:30|confirmed',
+    };
+
+    const messages = {
+      required: 'This {{field}} is required',
+      'name.min': 'The minimum symbols is 6',
+      'email.email': 'The email is invalid',
+      'password.confirmed': 'The password confirmation does not match'
+    };
+
+    validateAll(data, rules, messages)
+      .then(()=>{
+
+        axios.post(`${config.apiUrl}/auth/register`, {
+          name: this.state.name,
+          email: this.state.email,
+          password: this.state.password,
+        })
+          .then((response)=>{
+          localStorage.setItem('user', JSON.stringify(response.data.data))
+              this.props.history.push('/')
+            }
+          )
+          .catch((errors)=> {
+              console.log(errors.response);
+
+              const formattedErrrors = {};
+              formattedErrrors['email']=errors.response.data.email[0];
+
+              this.setState({
+                errors: formattedErrrors
+              })
+            }
+          );
+      })
+      .catch(errors=> {
+        console.log(errors);
+        const formattedErrors = {};
+
+        errors.forEach( error => formattedErrors[error.field] = error.message);
+
+        console.log(formattedErrors);
+        this.setState({
+          errors: formattedErrors
+        })
+      })
+  };
+
+  render(){
+    return(
+      <div className="mh-fullscreen bg-img center-vh p-20">
+        <div className="card card-shadowed p-50 w-400 mb-0" style={{maxWidth: '100%'}}>
+          <h5 className="text-uppercase text-center">Register</h5>
+          <br />
+          <br />
+          <br />
+          <form className="form-type-material" onSubmit={this.handleSubmit}>
+            <div className="form-group">
+              <input type="text" name="name" onChange={this.handleInputChange} className="form-control" placeholder="Username" />
+              {
+                this.state.errors['name'] && <small className="text-danger">{this.state.errors['name']}</small>
+              }
+            </div>
+            <div className="form-group">
+              <input type="text"  name="email" onChange={this.handleInputChange} className="form-control" placeholder="Email address" />
+              {
+                this.state.errors['email'] && <small className="text-danger">{this.state.errors['email']}</small>
+              }
+            </div>
+            <div className="form-group">
+              <input type="password"  name="password" onChange={this.handleInputChange} className="form-control" placeholder="Password" />
+              {
+                this.state.errors['password'] && <small className="text-danger">{this.state.errors['password']}</small>
+              }
+            </div>
+            <div className="form-group">
+              <input type="password"  name="password_confirmation" onChange={this.handleInputChange} className="form-control" placeholder="Password (confirm)" />
+              {
+                this.state.errors['password_confirmation'] && <small className="text-danger">{this.state.errors['password_confirmation']}</small>
+              }
+            </div>
+            <br />
+            <button className="btn btn-bold btn-block btn-primary" type="submit">Register</button>
+          </form>
+          <hr className="w-30" />
+          <p className="text-center text-muted fs-13 mt-20">Already have an account?
+            <a href="login.html">Sign in</a>
+          </p>
         </div>
-      </header>
-      <a href="blog-single.html">
-        <img className="rounded" src="assets/img/blog-1.jpg" alt="..." />
-      </a>
-      <div className="card-block">
-        <p className="text-justify">Together. Great. So good was saying, that can't first let called air divide stars male isn't i. Herb third let
-          may fourth divide. Greater gathering land you'll i their beast have. She'd form sea it wherein fowl, spirit
-          creeping living. Likeness creepeth you hath heaven. Likeness, moveth fruitful behold. Open evening a air us
-          behold. Saying above moving second a subdue likeness after also second.</p>
-        <p className="text-center mt-40">
-          <a className="btn btn-primary btn-round" href="blog-single.html">Read more</a>
-        </p>
       </div>
-    </article>
-  )
+    )
+  }
 };
