@@ -26,58 +26,15 @@ export default class SignUp extends React.Component{
     e.preventDefault();
 
     //validate user data
-
-    const data = this.state;
-
-
-    const rules = {
-      name: 'required|min:6|max:30',
-      email: 'required|email',
-      password: 'required|min:6|max:30|confirmed',
-    };
-
-    const messages = {
-      required: 'This {{field}} is required',
-      'name.min': 'The minimum symbols is 6',
-      'email.email': 'The email is invalid',
-      'password.confirmed': 'The password confirmation does not match'
-    };
-
     try{
-      await validateAll(data, rules, messages);
+      const user = await this.props.registerUser(this.state)
 
-      try{
-        const response = await Axios.post(`${config.apiUrl}/auth/register`, {
-          name: this.state.name,
-          email: this.state.email,
-          password: this.state.password,
-        })
+      localStorage.setItem('user', JSON.stringify(user))
+      this.props.setAuthUser(user)
+      this.props.history.push('/')
 
-        localStorage.setItem('user', JSON.stringify(response.data.data))
-        this.props.setAuthUser(response.data.data)
-        this.props.history.push('/')
-
-      } catch(errors){
-          // console.log(errors.response);
-
-          const formattedErrrors = {};
-          formattedErrrors['email']=errors.response.data.email[0];
-
-          this.setState({
-            errors: formattedErrrors
-          })
-      }
-    }catch(errors){
-      // console.log(errors);
-      const formattedErrors = {};
-
-      errors.forEach( error => formattedErrors[error.field] = error.message);
-
-      // console.log(formattedErrors);
-
-      this.setState({
-        errors: formattedErrors
-      })
+    } catch(errors){
+        this.setState({errors})
     }
   };
 

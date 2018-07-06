@@ -8,6 +8,7 @@ import {Footer} from './components/Footer';
 import {Welcome} from './components/Welcome';
 import {SingleArticle} from './components/SingleArticle';
 import {CreateArticle} from './components/CreateArticle';
+import AuthService from './services/auth';
 import registerServiceWorker from './registerServiceWorker';
 
 //Show if needed navbar
@@ -28,7 +29,6 @@ class App extends React.Component{
       this.setState({
         authUser: JSON.parse(user)
       })
-
     }
   }
 
@@ -46,7 +46,10 @@ class App extends React.Component{
         {location.pathname !== '/login' && location.pathname !== '/signup' &&  <Navbar authUser={this.state.authUser}/>}
         <Route exact path="/" component={Welcome} />
         <Route path="/login" component={Login} />
-        <Route path="/signup" render={(props)=> <SignUp {...props} setAuthUser={this.setAuthUser}/>} />
+        <Route path="/signup" render={props=> <SignUp {...props}
+                                                        registerUser={this.props.authService.registerUser}
+                                                        setAuthUser={this.setAuthUser}/>
+        } />
         <Route path="/article/:slug" component={SingleArticle} />
         <Route path="/articles/create" component={CreateArticle} />
         {location.pathname !== '/login' && location.pathname !== '/signup' &&  <Footer />}
@@ -58,12 +61,9 @@ class App extends React.Component{
 
 const Main = withRouter((props)=>{
   return(
-   <App {...props}/>
+   <App {...props} authService={new AuthService()}/>
   )
 });
-
-
-
 
 
 
