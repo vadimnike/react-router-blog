@@ -1,6 +1,6 @@
 import React from 'react';
 import {validateAll} from 'indicative';
-import axios from 'axios';
+import Axios from 'axios';
 import config from '../../config'
 
 export default class SignUp extends React.Component{
@@ -24,7 +24,6 @@ export default class SignUp extends React.Component{
 
   handleSubmit = async (e)=>{
     e.preventDefault();
-    // console.log(this.state);
 
     //validate user data
 
@@ -45,9 +44,10 @@ export default class SignUp extends React.Component{
     };
 
     try{
-      validateAll(data, rules, messages)
+      await validateAll(data, rules, messages);
+
       try{
-        const response =await axios.post(`${config.apiUrl}/auth/register`, {
+        const response = await Axios.post(`${config.apiUrl}/auth/register`, {
           name: this.state.name,
           email: this.state.email,
           password: this.state.password,
@@ -57,7 +57,7 @@ export default class SignUp extends React.Component{
         this.props.setAuthUser(response.data.data)
         this.props.history.push('/')
 
-      }catch(errors){
+      } catch(errors){
         console.log(errors.response);
 
         const formattedErrrors = {};

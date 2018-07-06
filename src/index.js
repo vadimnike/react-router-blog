@@ -27,7 +27,6 @@ class App extends React.Component{
       console.log(user);
       this.setState({
         authUser: JSON.parse(user)
-        // authUser: user
       })
 
     }
