@@ -1,6 +1,7 @@
 import React from 'react';
-
-
+import {validateAll} from 'indicative';
+import Axios from 'axios';
+import config from '../../config'
 
 export default class SignUp extends React.Component{
   constructor(){
@@ -24,17 +25,19 @@ export default class SignUp extends React.Component{
   handleSubmit = async (e)=>{
     e.preventDefault();
 
+    //validate user data
     try{
-      let user = await this.props.registerUser(this.state)
-      console.log(user);
+      const user = await this.props.registerUser(this.state)
+
       localStorage.setItem('user', JSON.stringify(user))
       this.props.setAuthUser(user)
-      this.props.history.push('/');
-    }catch(errors){
-        // console.log(errors);
+      this.props.history.push('/')
+
+    } catch(errors){
         this.setState({errors})
     }
   };
+
 
   render(){
     return(

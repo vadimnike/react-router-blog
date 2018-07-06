@@ -1,11 +1,10 @@
-import React from 'react';
-
+import Axios from 'axios';
 import {validateAll} from 'indicative';
-import axios from 'axios';
-import config from '../config';
+import config from '../config'
 
 export default class AuthService {
   async registerUser(data) {
+
     const rules = {
       name    : 'required|min:6|max:30',
       email   : 'required|email',
@@ -20,26 +19,39 @@ export default class AuthService {
     };
 
     try {
-      await validateAll(data, rules, messages)
+      await validateAll(data, rules, messages);
+
       try {
-        const response = axios.post(`${config.apiUrl}/auth/register`, {
+        const response = await Axios.post(`${config.apiUrl}/auth/register`, {
           name    : data.name,
           email   : data.email,
           password: data.password,
-        });
-        console.log(response);
+        })
+
         return response.data.data;
+
+        localStorage.setItem('user', JSON.stringify(response.data.data))
+        this.props.setAuthUser(response.data.data)
+        this.props.history.push('/')
+
       } catch (errors) {
-        // console.log(errors);
+        // console.log(errors.response);
+
         const formattedErrors = {};
         formattedErrors['email'] = errors.response.data.email[0];
-        return formattedErrors;
+
+        return formattedErrors
       }
     } catch (errors) {
       // console.log(errors);
       const formattedErrors = {};
+
       errors.forEach(error => formattedErrors[error.field] = error.message);
-      return formattedErrors;
+
+      // console.log(formattedErrors);
+
+     return formattedErrors
     }
+
   }
 }
