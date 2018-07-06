@@ -81,6 +81,7 @@ export default class SignUp extends React.Component{
     }
   };
 
+
   render(){
     return(
       <div className="mh-fullscreen bg-img center-vh p-20">
