@@ -22,7 +22,7 @@ export default class SignUp extends React.Component{
     })
   };
 
-  handleSubmit = (e)=>{
+  handleSubmit = async (e)=>{
     e.preventDefault();
     // console.log(this.state);
 
@@ -44,42 +44,40 @@ export default class SignUp extends React.Component{
       'password.confirmed': 'The password confirmation does not match'
     };
 
-    validateAll(data, rules, messages)
-      .then(()=>{
-
-        axios.post(`${config.apiUrl}/auth/register`, {
+    try{
+      validateAll(data, rules, messages)
+      try{
+        const response =await axios.post(`${config.apiUrl}/auth/register`, {
           name: this.state.name,
           email: this.state.email,
           password: this.state.password,
         })
-          .then((response)=>{
-          localStorage.setItem('user', JSON.stringify(response.data.data))
-              this.props.history.push('/')
-            }
-          )
-          .catch((errors)=> {
-              console.log(errors.response);
 
-              const formattedErrrors = {};
-              formattedErrrors['email']=errors.response.data.email[0];
+        localStorage.setItem('user', JSON.stringify(response.data.data))
+        this.props.setAuthUser(response.data.data)
+        this.props.history.push('/')
 
-              this.setState({
-                errors: formattedErrrors
-              })
-            }
-          );
-      })
-      .catch(errors=> {
-        console.log(errors);
-        const formattedErrors = {};
+      }catch(errors){
+        console.log(errors.response);
 
-        errors.forEach( error => formattedErrors[error.field] = error.message);
+        const formattedErrrors = {};
+        formattedErrrors['email']=errors.response.data.email[0];
 
-        console.log(formattedErrors);
         this.setState({
-          errors: formattedErrors
+          errors: formattedErrrors
         })
+      }
+    }catch(errors){
+      console.log(errors);
+      const formattedErrors = {};
+
+      errors.forEach( error => formattedErrors[error.field] = error.message);
+
+      console.log(formattedErrors);
+      this.setState({
+        errors: formattedErrors
       })
+    }
   };
 
   render(){
